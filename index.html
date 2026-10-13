@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Vinaya & Akash · Wedding Operations Control Tower</title>
+<meta name="theme-color" content="#9A401E">
+<style>
+:root{
+ --paper:#F3E6CF;--card:#FBF5EA;--paper-deep:#E8D6B6;--terracotta:#9A401E;
+ --accent:#893E22;--ink:#3E2716;--ink-soft:#7A6148;--brass:#B08A57;--blossom:#D9825F;
+ --line:rgba(62,39,22,.20);--shadow:0 8px 24px rgba(62,39,22,.10);
+ --ok:#536f42;--warn:#9a681c;--danger:#8d3027;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:Georgia,"Times New Roman",serif;font-size:17px;line-height:1.55}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:inherit}
+.topbar{position:sticky;top:0;z-index:20;background:rgba(251,245,234,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--brass);padding:10px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font-family:"Cormorant Garamond",Georgia,serif;font-style:italic;font-weight:700;font-size:25px;color:var(--accent);white-space:nowrap}
+.topnav{display:flex;gap:6px;overflow:auto}
+.topnav button{border:1px solid transparent;background:transparent;padding:8px 10px;border-radius:6px;font-size:13px;white-space:nowrap}
+.topnav button.active,.topnav button:hover{background:var(--terracotta);color:var(--card)}
+.wrap{max-width:1120px;margin:auto;padding:18px 20px 48px}
+.hero{background:var(--paper-deep);border:1px solid var(--brass);padding:30px 22px;text-align:center;position:relative;overflow:hidden}
+.hero:before,.hero:after{content:"";position:absolute;top:0;bottom:0;width:15%;opacity:.18;background:repeating-linear-gradient(90deg,transparent 0 18px,var(--ink-soft) 19px 21px,transparent 22px 40px)}
+.hero:before{left:0}.hero:after{right:0}
+.kicker{text-transform:uppercase;letter-spacing:.16em;font-size:12px;color:var(--accent)}
+.names{font-size:clamp(44px,8vw,72px);font-style:italic;font-weight:600;color:var(--accent);line-height:1.05;margin:8px 0}
+.plaque{display:inline-block;border:1px solid var(--brass);outline:1px solid var(--brass);outline-offset:4px;padding:7px 18px;margin:14px 0;text-transform:uppercase;letter-spacing:.14em;font-size:12px;background:rgba(251,245,234,.65)}
+.hero h1{font-size:clamp(25px,4vw,34px);margin:18px 0 4px}.hero p{max-width:650px;margin:5px auto;color:var(--ink-soft)}
+.countdown{font-variant-numeric:tabular-nums;color:var(--accent);font-weight:700;font-size:clamp(25px,5vw,42px);margin:10px 0}.count-label{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-soft)}
+.hero-actions{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin-top:15px}
+.btn{min-height:44px;border:1px solid var(--terracotta);border-radius:6px;padding:9px 13px;background:transparent;font-size:14px}
+.btn.primary{background:var(--terracotta);color:var(--card)}.btn.secondary{color:var(--terracotta)}
+.btn.danger{border-color:var(--danger);color:var(--danger)}
+.btn.small{min-height:36px;padding:6px 9px;font-size:12px}
+.btn:focus,input:focus,select:focus,textarea:focus{outline:3px solid rgba(176,138,87,.65);outline-offset:2px}
+.section{margin-top:24px}.sectionTitle{text-align:center;margin:8px 0 18px}.sectionTitle h2{font-size:32px;color:var(--accent);font-style:italic;margin:0}.divider{color:var(--brass);letter-spacing:6px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.card{background:var(--card);border:1px solid var(--brass);padding:18px;border-radius:4px;box-shadow:var(--shadow)}
+.card h3{margin:0 0 8px;color:var(--accent);font-size:21px}.card h4{margin:0 0 5px;color:var(--accent)}
+.metric{text-align:center}.metric .n{font-size:34px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}.metric .l{font-size:12px;text-transform:uppercase;letter-spacing:.10em;color:var(--ink-soft)}
+.muted{color:var(--ink-soft)}.tiny{font-size:12px}.tag{display:inline-block;border:1px solid var(--brass);border-radius:999px;padding:3px 8px;font-size:11px;margin:2px}
+.status{display:inline-flex;align-items:center;border-radius:999px;padding:4px 8px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;border:1px solid var(--line)}
+.status.done{background:#e5eadf;color:var(--ok)}.status.open{background:#f7ead1;color:var(--warn)}.status.blocked{background:#f4ded9;color:var(--danger)}.status.info{background:#eee4d3;color:var(--ink-soft)}
+.item{border-top:1px solid var(--line);padding:11px 0}.item:first-child{border-top:0}.row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.actions{display:flex;gap:6px;flex-wrap:wrap}
+.timeline{border-left:2px solid var(--brass);margin-left:10px;padding-left:18px}.tl{position:relative;padding:7px 0 15px}.tl:before{content:"◇";position:absolute;left:-29px;top:5px;color:var(--brass);background:var(--paper);font-size:15px}.time{font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}.featured{border-left:4px solid var(--terracotta);padding-left:12px;background:rgba(251,245,234,.55)}
+.field{display:grid;gap:5px;margin:10px 0}.field label{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft)}input,select,textarea{width:100%;padding:9px;border:1px solid var(--brass);border-radius:4px;background:var(--card)}textarea{min-height:80px}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.navtabs{display:flex;gap:7px;overflow:auto;margin:0 0 14px}.navtabs button{border:1px solid var(--brass);background:transparent;border-radius:999px;padding:8px 12px;white-space:nowrap}.navtabs button.active{background:var(--terracotta);color:var(--card)}
+.notice{border-left:4px solid var(--terracotta);background:rgba(251,245,234,.75);padding:12px;margin:10px 0}.alert{border-left-color:var(--danger)}.ok{border-left-color:var(--ok)}
+.hidden{display:none!important}.empty{text-align:center;color:var(--ink-soft);padding:22px}
+.modal{position:fixed;inset:0;background:rgba(62,39,22,.45);display:none;align-items:center;justify-content:center;padding:18px;z-index:50}.modal.open{display:flex}.modalBox{background:var(--card);border:1px solid var(--brass);max-width:650px;width:100%;max-height:90vh;overflow:auto;padding:20px}
+.toast{position:fixed;right:16px;bottom:16px;background:var(--accent);color:var(--card);padding:10px 14px;border-radius:6px;display:none;z-index:60}
+footer{text-align:center;color:var(--ink-soft);font-size:13px;margin-top:35px;padding:25px;border-top:1px solid var(--brass)}
+@media(max-width:800px){.g2,.g3,.g4{grid-template-columns:1fr}.topbar{padding:8px 10px}.topnav{display:none}.wrap{padding:10px 14px 70px}.hero{padding:24px 14px}.card{padding:15px}.mobileNav{display:flex!important}}
+.mobileNav{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(251,245,234,.97);border-top:1px solid var(--brass);z-index:30;justify-content:space-around;padding:6px}.mobileNav button{border:0;background:transparent;font-size:11px;padding:5px}.mobileNav button.active{color:var(--terracotta);font-weight:700}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">Vinaya & Akash · Ops</div>
+  <nav class="topnav" id="desktopNav"></nav>
+  <button class="btn small" id="editBtn">Edit / Admin</button>
+</header>
+
+<div class="wrap">
+<section class="hero">
+  <div class="kicker">Wedding Operations Control Tower</div>
+  <div class="names">Vinaya & Akash</div>
+  <div class="plaque">Monday · 2 November 2026</div>
+  <h1 id="modeTitle">Countdown to the 9:00 am ceremony</h1>
+  <div id="countdown" class="countdown">--d --h --m --s</div>
+  <div id="clock" class="count-label"></div>
+  <p>Internal working dashboard for wedding leads. Update status as the day progresses.</p>
+  <div class="hero-actions">
+    <button class="btn primary" data-jump="timeline">Timeline</button>
+    <button class="btn secondary" data-jump="issues">Issues & decisions</button>
+    <button class="btn secondary" data-jump="tasks">Master checklist</button>
+  </div>
+</section>
+
+<section class="section" id="command">
+  <div class="sectionTitle"><div class="divider">— ◇ —</div><h2>Command Centre</h2></div>
+  <div class="grid g4" id="metrics"></div>
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card"><div class="toolbar"><h3>Next actions</h3><button class="btn small" data-add="task">+ Task</button></div><div id="nextActions"></div></div>
+    <div class="card"><div class="toolbar"><h3>Open issues</h3><button class="btn small" data-add="issue">+ Issue</button></div><div id="openIssues"></div></div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h3>Operating rule</h3>
+    <div class="notice"><b>Protect the ceremony, elderly guests, lunch and transport first.</b> If the day slips, reduce leisure/activity time before compressing the ceremony or rushing senior family members.</div>
+    <div id="syncStatus" class="tiny muted"></div>
+  </div>
+</section>
+
+<section class="section" id="timeline">
+ <div class="sectionTitle"><div class="divider">— ◇ —</div><h2>Wedding Day Timeline</h2></div>
+ <div class="card">
+  <div class="toolbar"><div class="muted">Times are operational targets and can be edited.</div><button class="btn primary" data-add="timeline">+ Add event</button></div>
+  <div id="timelineList" class="timeline"></div>
+ </div>
+</section>
+
+<section class="section" id="people">
+ <div class="sectionTitle"><div class="divider">— ◇ —</div><h2>People & Ownership</h2></div>
+ <div class="card"><div class="toolbar"><div class="muted">One accountable owner per workstream. Add backups as needed.</div><button class="btn primary" data-add="person">+ Add person</button></div><div id="peopleList" class="grid g3"></div></div>
+</section>
+
+<section class="section" id="temple">
+ <div class="sectionTitle"><div class="divider">— ◇ —</div><h2>Temple Control</h2></div>
+ <div class="grid g2">
+  <div class="card"><h3>Confirmed / working facts</h3><div id="templeFacts"></div></div>
+  <div class="card"><div class="toolbar"><h3>Temple checklist</h3><button class="btn small" data-add="task" data-category="Temple">+ Add</button></div><div id="templeTasks"></div></div>
+ </div>
+</section>
+
+<section class="section" id="transport">
+ <div class="sectionTitle"><div class="divider">— ◇ —</div><h2>Transport</h2></div>
+ <div class="grid g2">
+  <div class="card"><div class="toolbar"><h3>Transport actions</h3><button class="btn small" data-add="task" data-category="Transport">+ Add</button></div><div id="transportTasks"></div></div>
+  <div class="card"><h3>Transport rules</h3><div class="item"><b>Wedding-day minibus</b><div class="muted">Guest-facing brief: Ramsheela departs 7:45 am; Temple departs 11:00 am; Discovery Village departs 6:00 pm.</div></div><div class="item"><b>Headcount</b><div class="muted">Confirm manifest before each departure. Prioritise elderly/family transport.</div></div><div class="item"><b>Cabs</b><div class="muted">Ramsheela is a difficult pickup point; arrange taxis in advance.</div></div></div>
+ </div>
+</section>
+
+<section class="section" id="accommodation">
+ <div class="sectionTitle"><div class="divider">— ◇ —</div><h2>Accommodation</h2></div>
+ <div class="grid g2">
+  <div class="card"><h3>Ramsheela Paradise Estate</h3><div class="item"><b>Owner</b><div>Ajay</div></div><div class="item"><b>Check-in</b><div>Sunday · 1 November · 1:00 pm</div></div><div class="item"><b>Check-out</b><div>Tuesday · 3 November · 11:00 am</div></div><div class="item"><b>Operational note</b><div class="muted">Vinaya needs a dedicated room. Akash does not stay here. Outhouse beds mean no bed-capacity issue.</div></div></div>
+  <div class="card"><h3>Service Apartment · GRC Brundavan</h3><div class="item"><b>Owner</b><div>Sulekha</div></div><div class="item"><b>Action</b><div class="muted">Maintain final room / arrival information here. Do not expose internal guest details on a public-facing guest page.</div></div></div>
+ </div>
+</section>
+
+<section class="section" id="discovery">
+ <div class="sectionTitle"><div class="divider">— ◇ —</div><h2>Discovery Village</h2></div>
+ <div class="grid g2">
+  <div class="card"><h3>Post-ceremony operations</h3><div class="item"><b>Owner</b><div>Akshay</div></div><div class="item"><b>Package</b><div>Half-Day Package · 11:00 am–6:00 pm</div></div><div class="item"><b>Lunch</b><div>1:30–2:30 pm</div></div><div class="item"><b>High tea</b><div>4:30–5:00 pm</div></div><div class="item"><b>Return</b><div>6:00 pm minibus to Ramsheela</div></div></div>
+  <div class="card"><div class="toolbar"><h3>Discovery checklist</h3><button class="btn small" data-add="task" data-category="Discovery Village">+ Add</button></div><div id="discoveryTasks"></div></div>
+ </div>
+</section>
+
+<section class="section" id="media">
+ <div class="sectionTitle"><div class="divider">— ◇ —</div><h2>Photo · Video · Livestream</h2></div>
+ <div class="grid g3">
+  <div class="card"><h3>Photography</h3><div class="item"><b>Lead</b><div>Sanket Kadam</div></div><div class="item"><b>Status</b><div>Assigned · DSLR permitted</div></div><div class="item"><b>Confirm</b><div class="muted">Tripod / gimbal / flash restrictions and restricted photography areas.</div></div></div>
+  <div class="card"><h3>Videography</h3><div class="item"><b>Lead</b><div>To be confirmed</div></div><div class="item"><b>Confirm</b><div class="muted">Equipment, power, audio and temple restrictions.</div></div></div>
+  <div class="card"><h3>Livestream</h3><div class="item"><b>Lead</b><div>To be confirmed</div></div><div class="item"><b>Minimum setup</b><div class="muted">Dedicated device + tripod, landscape, power, primary network + backup network, private/unlisted link and a 15-minute pre-ceremony test.</div></div></div>
+ </div>
+</section>
+
+<section class="section" id="issues">
+ <div class="sectionTitle"><div class="divider">— ◇ —</div><h2>Issues & Decisions</h2></div>
+ <div class="card"><div class="toolbar"><div class="muted">Use this as the live incident and decision log. Keep posts short.</div><button class="btn primary" data-add="issue">+ Log issue</button></div><div id="issuesList"></div></div>
+</section>
+
+<section class="section" id="tasks">
+ <div class="sectionTitle"><div class="divider">— ◇ —</div><h2>Master Checklist</h2></div>
+ <div class="card"><div class="toolbar"><div class="muted">Operational tasks across the whole weekend.</div><button class="btn primary" data-add="task">+ Add task</button></div><div class="navtabs" id="taskTabs"></div><div id="taskList"></div></div>
+</section>
+
+<section class="section" id="contacts">
+ <div class="sectionTitle"><div class="divider">— ◇ —</div><h2>Contacts & Leads</h2></div>
+ <div class="card"><div class="toolbar"><div class="muted">Internal dashboard only. Do not publish vendor numbers to the guest site.</div><button class="btn primary" data-add="person">+ Add contact</button></div><div id="contactsList"></div></div>
+</section>
+
+<section class="section" id="admin">
+ <div class="sectionTitle"><div class="divider">— ◇ —</div><h2>Admin</h2></div>
+ <div class="grid g2">
+  <div class="card"><h3>Shared-data connection</h3><p class="muted">This prototype can run locally, but true multi-device editing requires a shared database. The recommended free architecture is Supabase + GitHub Pages/Netlify.</p><div class="notice"><b>Important:</b> do not put a Supabase <b>service_role</b> key in this HTML. Only the publishable/anon key belongs in the browser.</div><button class="btn primary" id="showSetup">Show setup instructions</button></div>
+  <div class="card"><h3>Local backup</h3><p class="muted">Export a JSON backup before making major changes. Importing replaces the current local dataset.</p><div class="actions"><button class="btn" id="exportBtn">Export JSON</button><button class="btn" id="importBtn">Import JSON</button><button class="btn danger" id="resetBtn">Reset local data</button><input id="fileInput" type="file" accept=".json" class="hidden"></div></div>
+ </div>
+ <div class="card" style="margin-top:14px"><h3>Supabase configuration placeholder</h3><div class="field"><label>Project URL</label><input id="supabaseUrl" placeholder="https://YOURPROJECT.supabase.co"></div><div class="field"><label>Publishable / anon key</label><input id="supabaseKey" placeholder="YOUR_ANON_OR_PUBLISHABLE_KEY"></div><button class="btn primary" id="saveConfig">Save configuration</button><div id="setupText" class="notice hidden" style="margin-top:12px"></div></div>
+</section>
+</main>
+
+<div class="mobileNav" id="mobileNav"></div>
+<footer>Vinaya & Akash · Wedding Operations Control Tower · Built as a local-first prototype for shared wedding leads.</footer>
+</div>
+
+<div class="modal" id="modal"><div class="modalBox"><div class="toolbar"><h3 id="modalTitle">Edit</h3><button class="btn small" id="closeModal">Close</button></div><div id="modalBody"></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const WEDDING="2026-11-02T09:00:00+05:30";
+const CEREMONY_END="2026-11-02T10:00:00+05:30";
+const DEFAULT={
+ timeline:[
+  ["06:00","Control centre opens","Ajay","Operations"],
+  ["06:45","Ops vehicle / equipment movement","Ajay","Operations"],
+  ["07:15","Guest boarding / headcount","Ajay","Transport"],
+  ["07:30","Everyone ready","Ajay","Guest communications"],
+  ["07:45","Minibus to temple","Ajay","Transport"],
+  ["08:00","Temple operations arrival / setup","Sulekha","Temple"],
+  ["08:30","Family arrival","Sulekha","Temple"],
+  ["08:45","Final 15-minute temple check","Sulekha","Temple"],
+  ["09:00","Wedding ceremony","Vikas","Temple"],
+  ["10:00","Temple time / exploration","Sulekha","Temple"],
+  ["11:00","Minibus to Discovery Village","Ajay","Transport"],
+  ["11:30","Discovery Village arrival / freshen up","Akshay","Discovery Village"],
+  ["13:30","Lunch","Akshay","Discovery Village"],
+  ["16:30","High tea","Akshay","Discovery Village"],
+  ["18:00","Minibus back to Ramsheela","Ajay","Transport"]
+ ],
+ people:[
+  ["Ajay","Overall Operations","Primary"],
+  ["Sulekha","Service Apartment / Temple","Primary"],
+  ["Akshay","Discovery Village","Primary"],
+  ["Prachiti","Bride / Vinaya","Primary"],
+  ["Sulagna","Groom / Akash","Primary"],
+  ["Pauras","Emergency / Medical","Primary"],
+  ["Vikas","Priest / Rituals","Primary"],
+  ["Sanket Kadam","Photography","Primary"],
+  ["Videography","Videography","TBD"],
+  ["Livestream","Livestream","TBD"],
+  ["Transport","Transport Lead","TBD"]
+ ],
+ tasks:[
+  ["Temple","Confirm actual muhurat vs 9:00 access/start slot","Sulekha","Open"],
+  ["Temple","Confirm entry before 8:30 am","Sulekha","Open"],
+  ["Temple","Confirm exact vacate / clearance time","Sulekha","Open"],
+  ["Temple","Confirm guest capacity and elderly seating","Sulekha","Open"],
+  ["Temple","Confirm tripod / gimbal / flash restrictions","Sulekha","Open"],
+  ["Temple","Confirm restricted photography areas","Sulekha","Open"],
+  ["Temple","Confirm family-supplied ritual items","Vikas","Open"],
+  ["Temple","Confirm cleanup / clearance process","Sulekha","Open"],
+  ["Transport","Confirm minibus booking and driver details","Transport","Open"],
+  ["Transport","Create final passenger manifest","Ajay","Open"],
+  ["Transport","Headcount before 7:45 departure","Ajay","Open"],
+  ["Transport","Plan return transport from Discovery Village","Ajay","Open"],
+  ["Discovery Village","Confirm 3–4 additional rooms","Akshay","Open"],
+  ["Discovery Village","Confirm changing / room-key process","Akshay","Open"],
+  ["Discovery Village","Confirm lunch and high-tea readiness","Akshay","Open"],
+  ["Discovery Village","Confirm activity manager / safety briefing","Akshay","Open"],
+  ["Media","Confirm videographer name","Ajay","Open"],
+  ["Media","Assign livestream lead","Ajay","Open"],
+  ["Media","Run 15-minute livestream test at temple","Livestream","Open"],
+  ["Accommodation","Confirm Vinaya dedicated room at Ramsheela","Ajay","Open"],
+  ["Accommodation","Confirm service-apartment final allocation","Sulekha","Open"],
+  ["Communications","Send wedding-day ready-by reminder","Ajay","Open"],
+  ["Communications","Maintain Wedding Operations WhatsApp group","Ajay","Open"],
+  ["Emergency","Prepare emergency / medical kit","Pauras","Open"]
+ ],
+ issues:[
+  ["Temple","Actual muhurat needs confirmation: planning material may differ from 9:00 ceremony slot.","High","Sulekha","Open"],
+  ["Transport","Transport lead still TBD.","Medium","Ajay","Open"],
+  ["Media","Livestream lead still TBD.","Medium","Ajay","Open"],
+  ["Media","Videography lead still TBD.","Medium","Ajay","Open"]
+ ]
+};
+let state=loadState();
+let activeTaskFilter="All";
+
+function clone(x){return JSON.parse(JSON.stringify(x))}
+function loadState(){
+ try{const x=JSON.parse(localStorage.getItem("va_ops_v2"));return x&&x.timeline?x:clone(DEFAULT)}catch(e){return clone(DEFAULT)}
+}
+function save(){state.updatedAt=new Date().toISOString();localStorage.setItem("va_ops_v2",JSON.stringify(state));render();toast("Saved on this device")}
+function toast(t){const e=document.getElementById("toast");e.textContent=t;e.style.display="block";setTimeout(()=>e.style.display="none",1800)}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function jump(id){document.getElementById(id)?.scrollIntoView({behavior:"smooth",block:"start"})}
+function statusClass(s){return s==="Done"?"done":s==="Blocked"?"blocked":s==="Open"?"open":"info"}
+function empty(msg){return `<div class="empty">${esc(msg)}</div>`}
+
+function renderMetrics(){
+ const total=state.tasks.length, done=state.tasks.filter(x=>x[3]==="Done").length, openIssues=state.issues.filter(x=>x[4]!=="Resolved").length;
+ document.getElementById("metrics").innerHTML=[
+  ["Task completion",`${done}/${total}`],["Open issues",openIssues],["Timeline events",state.timeline.length],["Last saved",state.updatedAt?new Date(state.updatedAt).toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"}):"—"]
+ ].map(x=>`<div class="card metric"><div class="n">${x[1]}</div><div class="l">${x[0]}</div></div>`).join("");
+}
+function renderNext(){
+ const items=state.tasks.filter(x=>x[3]!=="Done").slice(0,6);
+ document.getElementById("nextActions").innerHTML=items.length?items.map((x,i)=>`<div class="item"><div class="row"><b>${esc(x[1])}</b><span class="status ${statusClass(x[3])}">${esc(x[3])}</span></div><div class="tiny muted">${esc(x[0])} · ${esc(x[2])}</div><div class="actions" style="margin-top:6px"><button class="btn small" onclick="toggleTask(${state.tasks.indexOf(x)})">Mark done</button><button class="btn small" onclick="editTask(${state.tasks.indexOf(x)})">Edit</button></div></div>`).join(""):empty("No open tasks.");
+ const issues=state.issues.filter(x=>x[4]!=="Resolved").slice(0,5);
+ document.getElementById("openIssues").innerHTML=issues.length?issues.map(x=>`<div class="item"><div class="row"><b>${esc(x[1])}</b><span class="status ${x[2]==="High"?"blocked":"open"}">${esc(x[2])}</span></div><div class="tiny muted">${esc(x[3])} · ${esc(x[4])}</div><div class="actions" style="margin-top:6px"><button class="btn small" onclick="editIssue(${state.issues.indexOf(x)})">Update</button></div></div>`).join(""):empty("No open issues.");
+}
+function renderTimeline(){
+ document.getElementById("timelineList").innerHTML=state.timeline.map((x,i)=>`<div class="tl ${x[1].toLowerCase().includes("ceremony")?"featured":""}"><div class="time">${esc(x[0])}</div><b>${esc(x[1])}</b><div class="tiny muted">${esc(x[2])} · ${esc(x[3])}</div><div class="actions" style="margin-top:5px"><button class="btn small" onclick="editTimeline(${i})">Edit</button><button class="btn small danger" onclick="del('timeline',${i})">Delete</button></div></div>`).join("");
+}
+function renderPeople(){
+ document.getElementById("peopleList").innerHTML=state.people.map((x,i)=>`<div class="card"><div class="row"><h3>${esc(x[0])}</h3><span class="status ${x[2]==="Primary"?"done":"open"}">${esc(x[2])}</span></div><div>${esc(x[1])}</div><div class="actions" style="margin-top:8px"><button class="btn small" onclick="editPerson(${i})">Edit</button><button class="btn small danger" onclick="del('people',${i})">Delete</button></div></div>`).join("");
+ document.getElementById("contactsList").innerHTML=state.people.map((x,i)=>`<div class="item"><div class="row"><b>${esc(x[0])}</b><span class="status ${x[2]==="Primary"?"done":"open"}">${esc(x[2])}</span></div><div class="muted">${esc(x[1])}</div></div>`).join("");
+}
+function renderTasks(){
+ const cats=["All",...new Set(state.tasks.map(x=>x[0]))];
+ document.getElementById("taskTabs").innerHTML=cats.map(c=>`<button class="${activeTaskFilter===c?"active":""}" onclick="activeTaskFilter='${esc(c).replace(/'/g,"\\'")}';renderTasks()">${esc(c)}</button>`).join("");
+ const arr=state.tasks.filter(x=>activeTaskFilter==="All"||x[0]===activeTaskFilter);
+ document.getElementById("taskList").innerHTML=arr.length?arr.map(x=>{const i=state.tasks.indexOf(x);return `<div class="item"><div class="row"><div><b>${esc(x[1])}</b><div class="tiny muted">${esc(x[0])} · owner: ${esc(x[2])}</div></div><span class="status ${statusClass(x[3])}">${esc(x[3])}</span></div><div class="actions" style="margin-top:7px"><button class="btn small" onclick="toggleTask(${i})">${x[3]==="Done"?"Reopen":"Mark done"}</button><button class="btn small" onclick="editTask(${i})">Edit</button><button class="btn small danger" onclick="del('tasks',${i})">Delete</button></div></div>`}).join(""):empty("No tasks in this category.");
+}
+function taskSubset(cat,el){const arr=state.tasks.map((x,i)=>[x,i]).filter(z=>z[0][0]===cat);document.getElementById(el).innerHTML=arr.length?arr.map(([x,i])=>`<div class="item"><div class="row"><b>${esc(x[1])}</b><span class="status ${statusClass(x[3])}">${esc(x[3])}</span></div><div class="tiny muted">${esc(x[2])}</div><div class="actions" style="margin-top:6px"><button class="btn small" onclick="toggleTask(${i})">${x[3]==="Done"?"Reopen":"Done"}</button><button class="btn small" onclick="editTask(${i})">Edit</button></div></div>`).join(""):empty("No tasks here.");
+}
+function renderSpecial(){
+ document.getElementById("templeFacts").innerHTML=[
+  ["Ceremony slot","9:00–10:00 am","Confirmed in the supplied guest brief"],
+  ["Family arrival","8:30 am","Working operational target"],
+  ["Temple time","10:00–11:00 am","Guest-facing itinerary"],
+  ["Garlands","Allowed","Working confirmation"],
+  ["Freestanding floral arrangement","Not allowed","Working confirmation"],
+  ["Walls / pillars","Nothing attached","Working confirmation"],
+  ["Brass lamps","Not allowed","Working confirmation"],
+  ["Photography","Assigned photographer permitted","Tripod/gimbal/flash restrictions still to confirm"],
+  ["Actual muhurat","TO CONFIRM","Do not assume 9:00 am is the auspicious moment"]
+ ].map(x=>`<div class="item"><div class="row"><b>${esc(x[0])}</b><span class="tag">${esc(x[1])}</span></div><div class="tiny muted">${esc(x[2])}</div></div>`).join("");
+ taskSubset("Temple","templeTasks");taskSubset("Transport","transportTasks");taskSubset("Discovery Village","discoveryTasks");
+}
+function renderIssues(){
+ document.getElementById("issuesList").innerHTML=state.issues.length?state.issues.map((x,i)=>`<div class="item"><div class="row"><div><b>${esc(x[1])}</b><div class="tiny muted">${esc(x[0])} · owner ${esc(x[3])}</div></div><span class="status ${x[4]==="Resolved"?"done":x[2]==="High"?"blocked":"open"}">${esc(x[4])}</span></div><div class="tiny muted" style="margin-top:5px">Severity: ${esc(x[2])}</div><div class="actions" style="margin-top:7px"><button class="btn small" onclick="resolveIssue(${i})">${x[4]==="Resolved"?"Reopen":"Resolve"}</button><button class="btn small" onclick="editIssue(${i})">Edit</button><button class="btn small danger" onclick="del('issues',${i})">Delete</button></div></div>`).join(""):empty("No issues logged.");
+}
+function updateCountdown(){
+ const now=new Date(), target=new Date(WEDDING), end=new Date(CEREMONY_END), el=document.getElementById("countdown"), title=document.getElementById("modeTitle");
+ if(now<target){let d=target-now;const days=Math.floor(d/86400000);d%=86400000;const h=Math.floor(d/3600000);d%=3600000;const m=Math.floor(d/60000);const s=Math.floor((d%60000)/1000);el.textContent=`${days}d ${String(h).padStart(2,"0")}h ${String(m).padStart(2,"0")}m ${String(s).padStart(2,"0")}s`;title.textContent="Countdown to the 9:00 am ceremony"}
+ else if(now<end){el.textContent="LIVE · CEREMONY IN PROGRESS";title.textContent="The wedding ceremony is underway"}
+ else {el.textContent="CEREMONY WINDOW COMPLETE";title.textContent="Ceremony window complete"}
+ document.getElementById("clock").textContent=`Current time · ${now.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit",second:"2-digit"})} IST`;
+}
+function render(){
+ renderMetrics();renderNext();renderTimeline();renderPeople();renderTasks();renderSpecial();renderIssues();
+ document.getElementById("syncStatus").textContent=state.updatedAt?`Local prototype · last saved ${new Date(state.updatedAt).toLocaleString()}`:"Local prototype · not yet saved";
+}
+function openModal(title,body){document.getElementById("modalTitle").textContent=title;document.getElementById("modalBody").innerHTML=body;document.getElementById("modal").classList.add("open")}
+function closeModal(){document.getElementById("modal").classList.remove("open")}
+function field(label,id,value="",type="text"){return `<div class="field"><label>${label}</label><input id="${id}" type="${type}" value="${esc(value)}"></div>`}
+function selectField(label,id,options,value){return `<div class="field"><label>${label}</label><select id="${id}">${options.map(o=>`<option ${o===value?"selected":""}>${esc(o)}</option>`).join("")}</select></div>`}
+function editTask(i){
+ const x=state.tasks[i];openModal("Edit task",field("Category","f1",x[0])+field("Task","f2",x[1])+field("Owner","f3",x[2])+selectField("Status","f4",["Open","Done","Blocked"],x[3])+`<div class="actions"><button class="btn primary" onclick="saveTask(${i})">Save</button></div>`)
+}
+function saveTask(i){state.tasks[i]=[f1.value,f2.value,f3.value,f4.value];closeModal();save()}
+function editTimeline(i){const x=state.timeline[i];openModal("Edit timeline event",field("Time","f1",x[0])+field("Event","f2",x[1])+field("Owner","f3",x[2])+field("Workstream","f4",x[3])+`<div class="actions"><button class="btn primary" onclick="saveTimeline(${i})">Save</button></div>`)}
+function saveTimeline(i){state.timeline[i]=[f1.value,f2.value,f3.value,f4.value];closeModal();save()}
+function editPerson(i){const x=state.people[i];openModal("Edit person / role",field("Name","f1",x[0])+field("Role","f2",x[1])+selectField("Status","f3",["Primary","TBD","Backup"],x[2])+`<div class="actions"><button class="btn primary" onclick="savePerson(${i})">Save</button></div>`)}
+function savePerson(i){state.people[i]=[f1.value,f2.value,f3.value];closeModal();save()}
+function editIssue(i){const x=state.issues[i];openModal("Edit issue",field("Workstream","f1",x[0])+field("Issue / decision","f2",x[1])+selectField("Severity","f3",["High","Medium","Low"],x[2])+field("Owner","f4",x[3])+selectField("Status","f5",["Open","Monitoring","Resolved"],x[4])+`<div class="actions"><button class="btn primary" onclick="saveIssue(${i})">Save</button></div>`)}
+function saveIssue(i){state.issues[i]=[f1.value,f2.value,f3.value,f4.value,f5.value];closeModal();save()}
+function add(type,category){
+ if(type==="task"){openModal("Add task",field("Category","f1",category||"General")+field("Task","f2")+field("Owner","f3","Ajay")+selectField("Status","f4",["Open","Done","Blocked"],"Open")+`<div class="actions"><button class="btn primary" onclick="createTask()">Add</button></div>`)}
+ if(type==="timeline"){openModal("Add timeline event",field("Time","f1","")+field("Event","f2")+field("Owner","f3","Ajay")+field("Workstream","f4","Operations")+`<div class="actions"><button class="btn primary" onclick="createTimeline()">Add</button></div>`)}
+ if(type==="person"){openModal("Add person",field("Name","f1")+field("Role","f2")+selectField("Status","f3",["Primary","TBD","Backup"],"Primary")+`<div class="actions"><button class="btn primary" onclick="createPerson()">Add</button></div>`)}
+ if(type==="issue"){openModal("Log issue",field("Workstream","f1","Operations")+field("Issue / decision","f2")+selectField("Severity","f3",["High","Medium","Low"],"Medium")+field("Owner","f4","Ajay")+selectField("Status","f5",["Open","Monitoring","Resolved"],"Open")+`<div class="actions"><button class="btn primary" onclick="createIssue()">Add</button></div>`)}
+}
+function createTask(){state.tasks.push([f1.value,f2.value,f3.value,f4.value]);closeModal();save()}
+function createTimeline(){state.timeline.push([f1.value,f2.value,f3.value,f4.value]);closeModal();save()}
+function createPerson(){state.people.push([f1.value,f2.value,f3.value]);closeModal();save()}
+function createIssue(){state.issues.push([f1.value,f2.value,f3.value,f4.value,f5.value]);closeModal();save()}
+function toggleTask(i){state.tasks[i][3]=state.tasks[i][3]==="Done"?"Open":"Done";save()}
+function resolveIssue(i){state.issues[i][4]=state.issues[i][4]==="Resolved"?"Open":"Resolved";save()}
+function del(type,i){if(confirm("Delete this item?")){state[type].splice(i,1);save()}}
+function setupText(){
+ document.getElementById("setupText").innerHTML=`<b>Free multi-device architecture</b><br><br>
+1. Create a free Supabase project.<br>
+2. In Supabase → SQL Editor, create tables for timeline, people, tasks and issues and enable Row Level Security with authenticated users allowed to read/write the wedding project.<br>
+3. Create accounts for the wedding leads in Supabase Authentication.<br>
+4. Put the project's URL and publishable/anon key into this page's configuration.<br>
+5. Host this folder on GitHub Pages, Netlify or Vercel. The HTML itself is free to host; Supabase's free tier supplies the shared database/authentication.<br><br>
+<b>Do not put a service_role key in the HTML.</b> For a real production setup I recommend one shared wedding project ID plus authenticated lead accounts, not a public writeable database.`;
+ document.getElementById("setupText").classList.remove("hidden")
+}
+function exportData(){const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="vinaya-akash-ops-backup.json";a.click()}
+function importData(){document.getElementById("fileInput").click()}
+document.getElementById("fileInput").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{state=JSON.parse(r.result);save();toast("Backup imported")}catch(err){alert("Invalid JSON backup")}};r.readAsText(f)})
+document.getElementById("exportBtn").onclick=exportData;document.getElementById("importBtn").onclick=importData;
+document.getElementById("resetBtn").onclick=()=>{if(confirm("Reset local data to the original wedding operations template?")){state=clone(DEFAULT);save()}};
+document.getElementById("showSetup").onclick=setupText;
+document.getElementById("saveConfig").onclick=()=>{localStorage.setItem("va_supabase_url",supabaseUrl.value);localStorage.setItem("va_supabase_key",supabaseKey.value);toast("Configuration saved locally")}
+document.getElementById("editBtn").onclick=()=>jump("admin");
+document.getElementById("closeModal").onclick=closeModal;
+document.getElementById("modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal()});
+document.addEventListener("click",e=>{
+ const j=e.target.closest("[data-jump]");if(j)jump(j.dataset.jump);
+ const a=e.target.closest("[data-add]");if(a)add(a.dataset.add,a.dataset.category);
+});
+const navItems=[["command","Command"],["timeline","Timeline"],["people","People"],["temple","Temple"],["transport","Transport"],["accommodation","Stay"],["discovery","Discovery"],["media","Media"],["issues","Issues"],["tasks","Checklist"],["contacts","Contacts"],["admin","Admin"]];
+document.getElementById("desktopNav").innerHTML=navItems.map(x=>`<button data-nav="${x[0]}">${x[1]}</button>`).join("");
+document.getElementById("mobileNav").innerHTML=navItems.slice(0,5).map(x=>`<button data-nav="${x[0]}">${x[1]}</button>`).join("");
+document.addEventListener("click",e=>{const n=e.target.closest("[data-nav]");if(n)jump(n.dataset.nav)});
+const observer=new IntersectionObserver(entries=>entries.forEach(en=>{if(en.isIntersecting){document.querySelectorAll("[data-nav]").forEach(b=>b.classList.toggle("active",b.dataset.nav===en.target.id))}}),{rootMargin:"-20% 0px -70% 0px"});
+navItems.forEach(x=>observer.observe(document.getElementById(x[0])));
+setInterval(updateCountdown,1000);updateCountdown();render();
+</script>
+</body>
+</html>
